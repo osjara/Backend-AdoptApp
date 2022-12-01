@@ -62,7 +62,7 @@ const loginUser = async (req, res) => {
     const validPassword = bcrypt.compareSync( password, usuario.password );
 
     if (!validPassword) {
-        return res.status(400).json({
+        return res.status(401).json({
             ok: false,
             msg: 'Password incorrecto'
         })
@@ -84,7 +84,7 @@ const loginUser = async (req, res) => {
 
 const obtenerUsuarios = async(req, res = response) => {
 
-    const usuario = await User.findOne()
+    const usuario = await Usuario.findOne()
     res.json(
         usuario
     )
