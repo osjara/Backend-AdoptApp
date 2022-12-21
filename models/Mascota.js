@@ -31,7 +31,7 @@ const MascotaSchema = Schema({
         ref: 'CentroAdopcion'
     },
     adoptado: {
-        type: Boolean,
+        type: String,
         require: true
     }
 })

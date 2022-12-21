@@ -17,7 +17,7 @@ router.post(
     '/new',
     [// middlewares
         check('email', 'El email es obligatorio').isEmail(),
-        check('direccion', 'La direccion es obligatoria').not().isEmpty(),
+        check('userName', 'La direccion es obligatoria').not().isEmpty(),
         check('password', 'La contraseña debe tener minimo 6 caracteres').isLength({ min: 6 }),
         validarCampos
     ],

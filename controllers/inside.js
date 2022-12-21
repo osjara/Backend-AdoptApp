@@ -7,39 +7,76 @@ const MeGusta = require("../models/MeGusta");
 const Perfil = require("../models/Perfil");
 const Publicacion = require("../models/Publicacion");
 const Seguidores = require("../models/Seguidores");
+const Usuario = require("../models/Usuario");
 
 
 
 
 const crearCentro = async(req, res = response) => {
 
-    const centroAdopcion = new CentroAdopcion(req.body);
+    const { admin } = req.body;
+    let centroAdmin = await CentroAdopcion.findOne({admin});
 
-    try {
-        centroAdopcion.fechaCreacion = Date.now();
+    const nuevoCentro = {...req.body}
 
-        const centroCreado = await centroAdopcion.save();
-
+    if (admin !== undefined && centroAdmin) {
+        const centroActualizado = await CentroAdopcion.findByIdAndUpdate(centroAdmin._id, nuevoCentro);
+        console.log('ok');
         res.json({
             ok: true,
-            centroAdopcion: centroCreado
+            CentroAdopcion: centroActualizado
         })
+    }else {
+        
+        try {
+            
+            const centroAdopcion = new CentroAdopcion(req.body);
+            const centroCreado = await centroAdopcion.save();
+    
+            res.json({
+                ok: true,
+                perfil: centroCreado
+            })
+    
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                ok: false,
+                msg: 'Hable con el admin'
+            });
+        }
+    }
+}
 
+const obtenerCentro = async (req, res = response) => {
+    const usuarioId = req.params.id;
+    const centroAdopcion = await CentroAdopcion.findOne({admin: usuarioId});
+    res.json(
+        centroAdopcion
+    )    
+}
+const eliminarCentro = async (req, res = response) => {
+
+    const userId = req.params.id;
+    const centroAdopcion = await CentroAdopcion.findOne({admin: userId})
+    
+    try {
+        await CentroAdopcion.findByIdAndDelete( centroAdopcion._id )
+    
+        res.json({ ok: true });
+        
     } catch (error) {
-        console.log(error)
         res.status(500).json({
             ok: false,
-            msg: 'Hable con el admin'
+            msg: 'No fue Posible eliminar Perfil'
         });
     }
-
 }
 
 const crearPerfil = async(req, res = response) => {
 
-    const { usuario, centroAdopcion } = req.body;
+    const { usuario } = req.body;
     let perfilUsuario = await Perfil.findOne({ usuario });
-    let perfilCentro = await Perfil.findOne({ centroAdopcion });
 
     const nuevoPerfil = {...req.body}
 
@@ -49,13 +86,6 @@ const crearPerfil = async(req, res = response) => {
             ok: true,
             perfil: perfilActualizado
         })
-    } else if( centroAdopcion !== undefined && perfilCentro){
-        const perfilActualizado = await Perfil.findByIdAndUpdate(perfilCentro._id, nuevoPerfil);
-        res.json({
-            ok: true,
-            perfil: perfilActualizado
-        })
-
     }else {
         
         try {
@@ -78,6 +108,48 @@ const crearPerfil = async(req, res = response) => {
     }
 }
 
+const obtenerPerfil = async (req, res = response) => {
+    const usuarioId = req.params.id;
+    const perfil = await Perfil.findOne({usuario: usuarioId});
+    res.json(
+        perfil
+    )
+
+
+
+    // if (usuarioId != "null") {     
+    //     const perfil = await Perfil.find({usuario: usuarioId})
+    //     res.json(
+    //         perfil
+    //     )
+    // } else{
+    //     console.log("no junciona");
+    //     res.status(500).json({
+    //         ok: false,
+    //         msg: 'No fue Posible Crear Mascota'
+    //     });
+    // }
+    
+}
+
+const eliminarPerfil = async (req, res = response) => {
+
+    const userId = req.params.id;
+    const perfil = await Perfil.findOne({usuario: userId})
+    
+    try {
+        await Perfil.findByIdAndDelete( perfil._id )
+    
+        res.json({ ok: true });
+        
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'No fue Posible eliminar Perfil'
+        });
+    }
+}
+
 const crearMascota = async(req, res = response) => {
 
     const mascota = new Mascota(req.body);
@@ -96,6 +168,33 @@ const crearMascota = async(req, res = response) => {
         res.status(500).json({
             ok: false,
             msg: 'No fue Posible Crear Mascota'
+        });
+    }
+}
+
+const obtenerMascotas = async(req, res = response) => {
+    const duenioId = req.params.id;
+    const mascotas = await Mascota.find({duenio: duenioId});
+
+    res.json(
+        mascotas
+    )
+}
+
+const eliminarMascotas = async (req, res = response) => {
+
+    const userId = req.params.id;
+    const mascotas = await Mascota.findOne({duenio: userId});
+    
+    try {
+        await Mascota.findByIdAndDelete( mascotas._id )
+    
+        res.json({ ok: true });
+        
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'No fue Posible eliminar Perfil'
         });
     }
 }
@@ -234,14 +333,45 @@ const crearAdopcion = async(req, res = response) => {
     }
 }
 
+const eliminarCuenta = async (req, res = response) => {
+
+    const userId = req.params.id;
+    const centroAdopcion = await CentroAdopcion.findOne({admin: userId})
+    const perfil = await Perfil.findOne({usuario: userId})
+    const mascotas = await Mascota.findOne({duenio: userId});
+    
+    
+    try {
+        await Mascota.findByIdAndDelete( mascotas._id );
+        await CentroAdopcion.findByIdAndDelete(centroAdopcion._id);
+        await Perfil.findByIdAndDelete(perfil._id);
+        await Usuario.findByIdAndDelete(userId);
+    
+        res.json({ ok: true });
+        
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'No fue Posible eliminar Perfil'
+        });
+    }
+}
+
 
 module.exports = {
     crearCentro,
+    obtenerCentro,
+    eliminarCentro,
     crearPerfil,
+    obtenerPerfil,
+    eliminarPerfil,
     crearMascota,
+    obtenerMascotas,
+    eliminarMascotas,
     crearPublicacion,
     crearComentario,
     meGusta,
     crearSeguidor,
-    crearAdopcion
+    crearAdopcion,
+    eliminarCuenta
 }

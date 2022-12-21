@@ -7,9 +7,28 @@ const CentroAdopcionSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Usuario',
         required: true
-    },fechaCreacion: {
-        type: Date,
-        required: true
+    },
+    fechaCreacion: {
+        type: Date
+    },
+    nombre:{
+        type: String
+    },
+    direccion:{
+        type: String
+    },
+    imagenPerfil:{
+        type: String,
+    },
+    imagenPortada:{
+        type: String,
+    },
+    telefono:{
+        type: String
+    },
+    ciudad: {
+        type: Schema.Types.ObjectId,
+        ref: 'Ciudad'
     }
 
 })

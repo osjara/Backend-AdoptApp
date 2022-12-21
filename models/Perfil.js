@@ -7,25 +7,18 @@ const PerfilSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Usuario'
     },
-    centroAdopcion: {
-        type: Schema.Types.ObjectId,
-        ref: 'CentroAdopcion'
-    },
     nombre:{
-        type: String,
-        require: true
+        type: String
     },
     apellido:{
-        type: String,
-        require: true
+        type: String
     },
-    userName:{
-        type: String,
-        require: true
+    direccion:{
+        type: String
     },
     fechaNacimiento: {
-        type: Date,
-        required: true
+        type: Date
+        
     },
     imagenPerfil:{
         type: String,
@@ -34,8 +27,7 @@ const PerfilSchema = Schema({
         type: String,
     },
     telefono:{
-        type: String,
-        require: true
+        type: String
     },
     ciudad: {
         type: Schema.Types.ObjectId,

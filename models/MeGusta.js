@@ -5,7 +5,7 @@ const { Schema, model } = require("mongoose");
 const MeGustaSchema = Schema({
     autor: {
         type: Schema.Types.ObjectId,
-        ref: 'Perfil',
+        ref: 'Usuario',
         require: true
     },
     publicacion: {

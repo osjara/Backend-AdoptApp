@@ -8,7 +8,7 @@ const UsuarioSchema = Schema({
         require: true,
         unique: true
     },
-    direccion:{
+    userName:{
         type: String,
         require: true
     },

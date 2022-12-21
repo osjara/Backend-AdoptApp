@@ -21,7 +21,7 @@ const PublicacionSchema = Schema({
     },
     autor: {
         type: Schema.Types.ObjectId,
-        ref: 'Perfil',
+        ref: 'Usuario',
         require: true
     }
 })
